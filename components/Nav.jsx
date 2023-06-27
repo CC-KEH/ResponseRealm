@@ -1,11 +1,13 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useTransition} from 'react';
 import {signIn,signOut,useSession,getProviders} from 'next-auth/react';
 const Nav = () => {
   const isUserLoggedIn = true;
   const [providers, setProviders] = useState(null);
+  const [toggleDropDown, setToggleDropDown] = useState(false);
+
   useEffect(()=>{
     const setProviders = async()=>{
       const response = await getProviders();
@@ -65,8 +67,35 @@ const Nav = () => {
               height={37}
               className='rounded-full'
               alt='profile'
-              onClick={()=>{}}
+              onClick={()=>{setToggleDropDown((prev)=>!prev)}}
              /> 
+
+            {toggleDropDown && (
+            <div className='dropdown'>
+              <Link href='/profile'
+              className='dropdown_link'
+              onClick={()=>setToggleDropDown(false)}>
+              My Profile
+              </Link>
+
+              <Link href='/create-prompt'
+              className='dropdown_link'
+              onClick={()=>setToggleDropDown(false)}>
+              Create Prompt
+              </Link>
+
+              <button
+              type='button'
+              onClick={()=>{
+                setToggleDropDown(false)
+                signOut();
+              }}
+              className='mt-5 w-full black_btn'>
+              Sign Out
+              </button>
+            </div>
+            )}
+
         </div>)
         :(<>
           {providers && Object.values(providers).map((provider)=>(
